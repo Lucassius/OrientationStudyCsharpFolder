@@ -421,23 +421,294 @@ namespace ConsoleApp1
         {
             Console.WriteLine(Fibo(10));
         }
-
         
-
-        static void Main(string[] args)
+        
+        static async void HotReloading()
         {
-            decimal Tax = CalculateTax(290, "BR");
-            Console.WriteLine($"{ Tax:C}"); // <:C> local value
+            while (true)
+            {
+                Console.WriteLine("Hot Reload!");
+                await Task.Delay(1);
 
-            string inp = CardinalToOrdinal(6);
-            Console.WriteLine(inp);
-
-            ShowFactorial();
-            ShowFib();
-            
+            }
         }
 
+        static void Diag()
+        {
+            Debug.WriteLine("Debug says...");
+            Trace.WriteLine("Trace says");
+        }
 
+        static void Withdraw(string accountName, decimal amount)
+        {
+            if (accountName is null)
+            {
+                Console.WriteLine("First");
+                throw new ArgumentNullException(paramName: nameof(accountName));
+            }
+            if (amount < 0)
+            {
+                Console.WriteLine("Second");
+                throw new ArgumentException(
+                message: $"{nameof(amount)} cannot be less than zero.");
+            }
+            // process parameters
+        }
+        public class Calculator
+        {
+            public static void Gamma() // public so it can be called from outside
+            {
+                Console.WriteLine("In Gamma");
+                Delta();
+            }
+            private static void Delta() // private so it can only be called internally
+            {
+                Console.WriteLine("In Delta");
+                File.OpenText("bad file path");
+            }
+        }
+
+        class PrimeFactorsNuns
+        {
+            const int MAX_SIZE = 1000;
+            static bool IsPrimeNumber(int num)
+
+            {
+
+                bool bPrime = true;
+
+                int factor = num / 2;
+
+
+
+                int i = 0;
+
+
+
+                for (i = 2; i <= factor; i++)
+
+                {
+
+                    if ((num % i) == 0)
+
+                        bPrime = false;
+
+                }
+
+                return bPrime;
+
+            }
+
+            static public int GetPrimeFactors(int num, out int[] arrResult)
+
+            {
+
+                int count = 0;
+
+                int[] arr = new int[MAX_SIZE];
+
+                arrResult = new int[MAX_SIZE];
+
+                int i = 0;
+
+                int idx = 0;
+
+
+
+                for (i = 2; i <= num; i++)
+
+                {
+
+                    if (IsPrimeNumber(i) == true)
+
+                        arr[count++] = i;
+
+                }
+
+
+
+                while (true)
+
+                {
+
+                    if (IsPrimeNumber(num) == true)
+
+                    {
+
+                        arrResult[idx++] = num;
+
+                        break;
+
+                    }
+
+
+
+                    for (i = count - 1; i >= 0; i--)
+
+                    {
+
+                        if ((num % arr[i]) == 0)
+
+                        {
+
+                            arrResult[idx++] = arr[i];
+
+                            num = num / arr[i];
+
+                            break;
+
+                        }
+
+                    }
+
+                }
+
+                return idx;
+
+            }
+
+            public static void ReturnPrimeFactors() // The last exercise, chapter 4
+            {
+                int[] arrResult;
+
+                Console.Write("Enter a number to find prime factor: ");
+
+                int n = Convert.ToInt32(Console.ReadLine());
+
+                int count = GetPrimeFactors(n, out arrResult);
+
+                for (int i = 0; i < count; i++)
+
+                {
+
+                    Console.Write($"{Convert.ToString(arrResult[i])}");
+
+                    if (i != count - 1)
+
+                        Console.Write(" x ");
+
+                }
+
+                Console.WriteLine();
+            }
+
+
+
+            //the class is public 'cause we need to acess it outside the assembly
+
+            //Class BankAccount
+            public class BankAccount
+            {
+                public string? AccountName; // instance member
+                public decimal Balance; // instance member
+                public static decimal InterestRate; // shared member
+            }
+
+            //Class that carries the values about some Person
+
+            public class Person
+            {
+                public string? Name;
+                public int Age;
+                public const string Species = "Homo Sapiens";
+            }
+
+            static void ClassAplicationsBankAccount()
+            {
+                BankAccount.InterestRate = 0.012M; // store a shared value
+                BankAccount jonesAccount = new();
+                jonesAccount.AccountName = "Mrs. Jones";
+                jonesAccount.Balance = 2400;
+
+                Console.WriteLine(format: "{0} earned {1:C} interest.",
+                arg0: jonesAccount.AccountName,
+                arg1: jonesAccount.Balance * BankAccount.InterestRate);
+
+                BankAccount gerrierAccount = new();
+                gerrierAccount.AccountName = "Ms. Gerrier";
+                gerrierAccount.Balance = 98;
+
+                Console.WriteLine(format: "{0} earned {1:C} interest.",
+                 arg0: gerrierAccount.AccountName,
+                 arg1: gerrierAccount.Balance * BankAccount.InterestRate);
+
+                Person Jack = new();
+
+                Console.WriteLine("Bob name:");
+                Jack.Name = Console.ReadLine();
+
+                Console.WriteLine($"{ Jack.Name} is a {Person.Species}");
+                
+            }
+
+            public class TextAndNumber
+            {
+                public string? Text;
+                public int Number;
+
+            }
+            public class AllMeaning
+            {
+                public TextAndNumber GetData()
+
+                {
+                    return new TextAndNumber
+                    {
+                        Text = "Universe is",
+                        Number = 42
+                    };
+                }
+            }
+
+            //partial classes
+
+            public partial class Human
+            {
+                public string? Name;
+                public string? Planet;
+
+                public string Origin
+                {
+                    get
+                    {
+                        return string.Format($"{Name} and your house {Planet}");
+                    }
+                }
+
+
+            }
+
+            static void PartialAplications()
+            {
+                Human Jack = new()
+                {
+                    Name = "Jack Norther",
+                    Planet = "Mars"
+                };
+
+                Console.Write($"{Jack.Origin}\nName: {Jack.Name}\nHome: {Jack.Planet}");
+            }
+
+            //Funcionality
+
+            public static int Factorial(int number)
+            {
+                if(number < 0)
+                {
+                    throw new ArgumentException($"{nameof(number)} cannot be less than 0");
+                }
+                return localFactorial(number);
+                int localFactorial(int localNumber)
+                {
+                    if (localNumber == 0) return 1;
+                    return localNumber * localFactorial(localNumber - 1);
+                }
+            }
+
+            static void Main(string[] args)
+            {
+                //call the programs here
+            }
 
     }
 
