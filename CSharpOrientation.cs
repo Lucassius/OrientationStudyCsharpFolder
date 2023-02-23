@@ -705,14 +705,324 @@ namespace ConsoleApp1
                 }
             }
 
-            static void Main(string[] args)
+            //Pattern matching with objects
+
+            public class Passenger
             {
-                //call the programs here
+                public string? Name;
+            }
+            public class BusinessClassPassenger : Passenger
+            {
+                public override string ToString()
+                {
+                    return $"Business Class: {Name}";
+                }
+            }
+            public class FirstClassPassenger : Passenger
+            {
+                public int AirMiles { get; set; }
+                public override string ToString()
+                {
+                    return $"{AirMiles} AIRMILES: {Name}";
+                }
             }
 
+            static void PatternClasses()
+            {
+                Passenger[] passengers =
+                {
+                    new FirstClassPassenger {AirMiles = 12_213, Name = "Jake"},
+                    new FirstClassPassenger {AirMiles = 34_2332, Name = "Joseph"},
+                    new BusinessClassPassenger {Name = "Leonard"}
+                };
+                foreach (Passenger passenger in passengers)
+                {
+                    Console.WriteLine($"{passenger}");
+                }
+            }
+
+            static string TypeCard(int n)
+            {
+                if (n == 0)
+                {
+                    string? str_type = "joker";
+                    return Convert.ToString(str_type);
+                }
+                else if (n == 1)
+                {
+                    string? str_type = "ace";
+                    return Convert.ToString(str_type);
+                }
+                else if (n == 2)
+                {
+                    string? str_type = "king";
+                    return Convert.ToString(str_type);
+                }
+                else if (n == 3)
+                {
+                    string? str_type = "queen";
+                    return Convert.ToString(str_type);
+                }
+                else
+                {
+                    string? str_type = "jack";
+                    return Convert.ToString(str_type);
+                }
+            }
+
+            public class Cards
+            {
+
+            }
+            public class Properties : Cards
+            {
+                public string? Suit;
+                public int Number;
+                public string? Color;
+                public string? type;
+
+            }
+
+            public static void DeckOfCards()
+            {
+                int rdm = Random.Shared.Next(1, 4);
+
+                Cards[] deck =
+                {
+                    new Properties {Suit = "Heart", Number = Random.Shared.Next(1,16), Color = "Red", type = TypeCard(rdm)},
+                    new Properties {Suit = "Diamond", Number = Random.Shared.Next(1,16), Color = "Black", type = TypeCard(rdm)},
+                    new Properties {Suit = "Club", Number = Random.Shared.Next(1,16), Color = "White", type = TypeCard(rdm)}
+
+                };
+
+                foreach (Cards card in deck)
+                {
+                    try
+                    {
+                        Console.WriteLine(card);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"{ex.ToString()} and {ex.Message}");
+                    }
+                }
+            }
+
+
+            public class CryptographyTool
+            {
+                // AES encryption and decryption
+                public static string AESEncrypt(string plainText, string key)
+                {
+                    byte[] iv = new byte[16];
+                    byte[] array;
+
+                    using (Aes aes = Aes.Create())
+                    {
+                        aes.Key = Encoding.UTF8.GetBytes(key);
+                        aes.IV = iv;
+
+                        ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+                        using (var ms = new System.IO.MemoryStream())
+                        {
+                            using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                            {
+                                using (var sw = new System.IO.StreamWriter(cs))
+                                    sw.Write(plainText);
+                                array = ms.ToArray();
+                            }
+                        }
+                    }
+
+                    return Convert.ToBase64String(array);
+                }
+
+                public static string AESDecrypt(string cipherText, string key)
+                {
+                    byte[] iv = new byte[16];
+                    byte[] buffer = Convert.FromBase64String(cipherText);
+
+                    using (Aes aes = Aes.Create())
+                    {
+                        aes.Key = Encoding.UTF8.GetBytes(key);
+                        aes.IV = iv;
+
+                        ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+
+                        using (var ms = new System.IO.MemoryStream(buffer))
+                        {
+                            using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+                            {
+                                using (var sr = new System.IO.StreamReader(cs))
+                                    return sr.ReadToEnd();
+                            }
+                        }
+                    }
+                }
+
+                // RSA encryption and decryption
+                public static string RSAEncrypt(string plainText, string publicKey)
+                {
+                    byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+
+                    using (var rsa = new RSACryptoServiceProvider(2048))
+                    {
+                        rsa.FromXmlString(publicKey);
+
+                        byte[] encryptedData = rsa.Encrypt(plainTextBytes, true);
+                        return Convert.ToBase64String(encryptedData);
+                    }
+                }
+
+                public static string RSADecrypt(string cipherText, string privateKey)
+                {
+                    byte[] cipherTextBytes = Convert.FromBase64String(cipherText);
+
+                    using (var rsa = new RSACryptoServiceProvider(2048))
+                    {
+                        rsa.FromXmlString(privateKey);
+
+                        byte[] decryptedData = rsa.Decrypt(cipherTextBytes, true);
+                        return Encoding.UTF8.GetString(decryptedData);
+                    }
+                }
+
+                // DES encryption and decryption
+                public static string DESEncrypt(string plainText, string key, string iv)
+                {
+                    byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+                    byte[] ivBytes = Encoding.UTF8.GetBytes(iv);
+
+                    byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+                    byte[] encryptedBytes = null;
+
+                    using (DESCryptoServiceProvider des = new DESCryptoServiceProvider())
+                    {
+                        des.Key = keyBytes;
+                        des.IV = ivBytes;
+
+                        encryptedBytes = des.CreateEncryptor().TransformFinalBlock(plainTextBytes, 0, plainTextBytes.Length);
+                    }
+
+                    return Convert.ToBase64String(encryptedBytes);
+                }
+
+                public static string DESDecrypt(string cipherText, string key, string iv)
+                {
+                    byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+                    byte[] ivBytes = Encoding.UTF8.GetBytes(iv);
+
+                    byte[] cipherTextBytes = Convert.FromBase64String(cipherText);
+                    byte[] decryptedBytes = null;
+
+                    using (DESCryptoServiceProvider des =
+                            new DESCryptoServiceProvider())
+                    {
+                        des.Key = keyBytes;
+                        des.IV = ivBytes;
+
+                        decryptedBytes = des.CreateDecryptor().TransformFinalBlock(cipherTextBytes, 0, cipherTextBytes.Length);
+                    }
+
+                    return Encoding.UTF8.GetString(decryptedBytes);
+                }
+
+
+                static void space() => Console.WriteLine("\n\n\n");
+
+                //Pratical applications with LinQ
+
+                static void LinqAp1()
+                {
+                    List<int> numbers = new List<int>();
+                    for(int i = 1; i <= 99; i++)
+                    {
+                        numbers.Add(i);
+                    }
+                    IEnumerable<int> firstAndLastFive = numbers.Take(5).Concat(numbers.TakeLast(5));
+                    /*Take the firsts five numbers and write, then it takes the lasts 5 five numbers and writes in the console too
+                     * and the Concat method realize an union of these elemments*/
+
+                    foreach(int i in firstAndLastFive)
+                    {
+                        Console.WriteLine(i);
+                    }
+                }
+
+                static void LinqAp2()
+                {
+                    int[] values = new int[] { 0, 12, 44, 36, 92, 54, 13, 8 };
+                    IEnumerable<int> result =
+                        from v in values
+                        where v < 54 // conditional clause
+                        orderby -v // highest to lowesr
+                        select v;   //tells it what to put 
+
+                    foreach(int i in result)
+                    {
+                        //output
+                        Console.WriteLine(i);
+                    }
+                }
+
+                //Linq working with objects
+
+                class Comic
+                {
+                    public string Name { get; set; }
+                    public int Issue { get; set; }
+                    public override string ToString() => $"{Name} (Issue #{Issue})";
+
+                    public static readonly IEnumerable<Comic> Catalog =
+                        new List<Comic> {
+                            new Comic { Name = "Johnny America vs. the Pinko", Issue = 6 },
+                            new Comic { Name = "Rock and Roll (limited edition)", Issue = 19 },
+                            new Comic { Name = "Woman's Work", Issue = 36 },
+                            new Comic { Name = "Hippie Madness (misprinted)", Issue = 57 },
+                            new Comic { Name = "Revenge of the New Wave Freak (damaged)", Issue = 68 },
+                            new Comic { Name = "Black Monday", Issue = 74 },
+                            new Comic { Name = "Tribal Tattoo Madness", Issue = 83 },
+                            new Comic { Name = "The Death of the Object", Issue = 97 },
+                        };
+                    public static readonly IReadOnlyDictionary<int, decimal> Prices =
+                        new Dictionary<int, decimal> {
+                             { 6, 3600M },
+                             { 19, 500M },
+                             { 36, 650M },
+                             { 57, 13525M },
+                             { 68, 250M },
+                             { 74, 75M },
+                             { 83, 25.75M },
+                             { 97, 35.25M },
+                             };
+                }
+
+                static void LinqAp3()
+                {
+                    IEnumerable<Comic> mostExpensive =
+                         from comic in Comic.Catalog
+                         where Comic.Prices[comic.Issue] > 500
+                         orderby -Comic.Prices[comic.Issue]
+                         select comic;
+
+                    foreach (Comic comic in mostExpensive)
+                    {
+                        Console.WriteLine($"{comic} is worth {Comic.Prices[comic.Issue]:c}");
+                    }
+                }
+
+
+                    static void Main(string[] args)
+                {
+                    LinqAp1();
+                    space();
+                    LinqAp2();  
+                    space();
+                    LinqAp3();
+
+                }
+            }
+        }
     }
-
 }
-
-
-
