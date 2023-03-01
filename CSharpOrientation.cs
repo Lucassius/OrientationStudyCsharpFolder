@@ -931,7 +931,7 @@ namespace ConsoleApp1
 
                 static void space() => Console.WriteLine("\n\n\n");
 
-                //Pratical applications with LinQ
+                //LINQ
 
                 static void LinqAp1()
                 {
@@ -1000,6 +1000,9 @@ namespace ConsoleApp1
 
                 static void LinqAp3()
                 {
+                    //We can replace to <var mostExpensive> 
+                    // In this way, the code works too
+
                     IEnumerable<Comic> mostExpensive =
                          from comic in Comic.Catalog
                          where Comic.Prices[comic.Issue] > 500
@@ -1012,15 +1015,115 @@ namespace ConsoleApp1
                     }
                 }
 
+                static void LinqAp4()
+                {
+                    int[] slayers = { 12, 64, 23, 65, 23, 56, 6546, 32 ,44, 65 };
+                    var knifes =
+                        from tros in slayers
+                        where (tros == 6546 || tros == 44 || tros >= 13)
+                        orderby tros descending
+                        select tros + 10;
+
+                    foreach(var luses in slayers)
+                    {
+                        Console.WriteLine(luses);   
+                    }
+                    
+                }
+
+                static void SimpleSequence()
+                {
+                    int[] sequence = { 12, 54, 78, 8, 3, 4, 5, 6, };
+                    var greaterThanFour =
+                        from number in sequence
+                        where number > 4
+                        select number;
+                    foreach(var num in greaterThanFour)
+                    {
+                        Console.WriteLine(num);
+                    }
+                }
+                
+                //The <new> keyword
+                static void Newva()
+                {
+
+                    var platos = new[]
+                    {
+                        new {Name = "Apologies", knowledge = 1},
+                        new {Name = "Phedro", knowledge = 2},
+                        new {Name = "Republic", knowledge = 67},
+                        new {Name = "DelfsOracle", knowledge = 2143},
+                    };
+
+
+
+                }
+
+
+                //lambda expressions 
+                
+                static double GetRandomDouble(int max)/*<<<function*/ => max * Random.Shared.Next(); /*<<<<return*/
+
+                static int Summa(int a, int b) => a + b;
+
+                // the key <?> operator
+                //is this condition true ? yes : no
+
+                static void TheQKeyOperator()
+                {
+                    
+                    Console.WriteLine("Type something");
+                    int a = Convert.ToInt32(Console.ReadLine());    
+
+                    if(a > 120)
+                    {
+                        Console.WriteLine("anormal");
+                    }
+                    else
+                    {
+                        Console.WriteLine("normal");
+                    }
+
+                    int answer = a > 120 ? 1 : 0;
+                    //where 1 is true and 0 is false
+                    var numer = 0.23;
+                    var num = "";
+                        
+                }
+                // Lambda expressions & LINQ
+
+                static void LambdExLinQ()
+                {
+                    var array = new[] { 1, 2, 3, 4, };
+                    var result = from i in array select i * 2;
+                    foreach(var i in result)
+                    {
+                        Console.WriteLine(i);
+                    }
+                    
+                }
+
+                static void ordebymethod()
+                {
+                    var nums = new[] { 2, 43, 54, 12, 56.3, 32, 54, 676, 47242, 5634123, 56421, 4321, 3452 };
+                    var result =
+                        from num in nums // new var num in numbers(nums)
+                        where num > 56.3 //condition 
+                        orderby -num //descending(+ operator means greater to lesser) & (- operator means lesser to greater)
+                        select num; //select the result(num)
+
+                    foreach(var i in result)
+                    {
+                        Console.WriteLine(i);
+                    }
+                }
+                
+                
 
                     static void Main(string[] args)
                 {
-                    LinqAp1();
-                    space();
-                    LinqAp2();  
-                    space();
-                    LinqAp3();
-
+                    ordebymethod();
                 }
             }
         }
